@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Лічильник (з C#)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        
+        .counter {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            display: inline-block;
+            min-width: 100px;
+        }
+        
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        .reset {
+            background-color: #dc3545;
+        }
+        
+        .reset:hover {
+            background-color: #a71d2a;
+        }
+        
+        .status {
+            margin-top: 20px;
+            color: green;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Лічильники (зі збереженням на сервері)</h1>
+    
+    <div>
+        <h2>Лічильник A</h2>
+        <div class="counter" id="counterDisplayA">0</div>
+        <br>
+        
+        <button id="incrementBtnA">+1</button>
+        <button id="resetBtnA" class="reset">Скинути</button>
+        
+        <div class="status" id="statusA">Готовий до роботи</div>
+    </div>
+    <div>
+        <h2>Лічильник B</h2>
+        <div class="counter" id="counterDisplayB">0</div>
+        <br>
+        
+        <button id="incrementBtnB">+1</button>
+        <button id="resetBtnB" class="reset">Скинути</button>
+        
+        <div class="status" id="statusB">Готовий до роботи</div>
+    </div>
+
+    <script>
+        // Знаходимо елементи
+        let counterDisplayA = document.getElementById('counterDisplayA');
+        let counterDisplayB = document.getElementById('counterDisplayB');
+        let incrementBtnA = document.getElementById('incrementBtnA');
+        let incrementBtnB = document.getElementById('incrementBtnB');
+        let resetBtnA = document.getElementById('resetBtnA');
+        let resetBtnB = document.getElementById('resetBtnB');
+        let statusDivA = document.getElementById('statusA');
+        let statusDivB = document.getElementById('statusB');
+        
+        // УНІВЕРСАЛЬНА функція для показу повідомлень
+        function showMessage(statusDiv, message) {
+            statusDiv.textContent = message;
+            setTimeout(() => {
+                statusDiv.textContent = 'Готовий до роботи';
+            }, 1000);
+        }
+        
+        // УНІВЕРСАЛЬНА функція для завантаження лічильника
+        async function loadCounter(apiUrl, counterDisplay, statusDiv) {
+            try {
+                let response = await fetch(apiUrl);
+                let value = await response.json();
+                counterDisplay.textContent = value;
+                showMessage(statusDiv, 'Завантажено');
+            } catch (error) {
+                showMessage(statusDiv, 'Помилка!');
+            }
+        }
+        
+        // УНІВЕРСАЛЬНА функція для збільшення лічильника
+        async function incrementCounter(apiUrl, counterDisplay, statusDiv) {
+            try {
+                let response = await fetch(apiUrl, { method: 'POST' });
+                let newValue = await response.json();
+                counterDisplay.textContent = newValue;
+                showMessage(statusDiv, '+1');
+            } catch (error) {
+                showMessage(statusDiv, 'Помилка!');
+            }
+        }
+        
+        // УНІВЕРСАЛЬНА функція для скидання лічильника
+        async function resetCounter(apiUrl, counterDisplay, statusDiv) {
+            try {
+                let response = await fetch(apiUrl, { method: 'POST' });
+                let newValue = await response.json();
+                counterDisplay.textContent = newValue;
+                showMessage(statusDiv, 'Скинуто');
+            } catch (error) {
+                showMessage(statusDiv, 'Помилка!');
+            }
+        }
+        
+        // ТЕПЕР КОРОТКІ ПРИВ'ЯЗКИ ДО КНОПОК
+        incrementBtnA.addEventListener('click', () => 
+            incrementCounter('/api/incrementA', counterDisplayA, statusDivA)
+        );
+        resetBtnA.addEventListener('click', () => 
+            resetCounter('/api/resetA', counterDisplayA, statusDivA)
+        );
+        
+        incrementBtnB.addEventListener('click', () => 
+            incrementCounter('/api/incrementB', counterDisplayB, statusDivB)
+        );
+        resetBtnB.addEventListener('click', () => 
+            resetCounter('/api/resetB', counterDisplayB, statusDivB)
+        );
+        
+        // Завантажуємо обидва лічильники
+        loadCounter('/api/counterA', counterDisplayA, statusDivA);
+        loadCounter('/api/counterB', counterDisplayB, statusDivB);
+        
+        console.log("Сторінка готова!");
+    </script>
+    
+</body>
+</html>
