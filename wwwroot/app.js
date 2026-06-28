@@ -1,3 +1,5 @@
+let editingProductId = null;
+
 function showProducts(products) {
     const container = document.getElementById('productContainer');
     container.innerHTML = "";
@@ -18,6 +20,9 @@ function showProducts(products) {
         editBtn.textContent = "Edit";
         editBtn.classList.add('editBtn');
         newDiv.appendChild(editBtn);
+        editBtn.addEventListener('click', () => {
+            editProduct(product);
+        });
         
         let deleteBtn = document.createElement('button');
         deleteBtn.textContent = "Delete";
@@ -72,6 +77,83 @@ async function deleteProduct(id){
         console.log(error);
     }
 }
+
+async function editProduct(product){
+    try {
+        let modalOverlay = document.querySelector('.modal-overlay');
+        let changeName = document.getElementById('changeName');
+        let changePrice = document.getElementById('changePrice');
+        let changeImage = document.getElementById('changeImage');
+
+        changeName.value = product.name;
+        changePrice.value = product.price;
+        changeImage.value = product.imageUrl;
+
+        editingProductId = product.id;
+
+        modalOverlay.style.display = "flex";
+
+        document.addEventListener('keydown', (e) =>{
+            if(modalOverlay.style.display === "flex"){
+                if(e.key === 'Escape'){
+                    closeModal();
+                }
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if(modalOverlay.style.display === "flex"){
+                if(e.key === 'Enter'){
+                    saveChanges();
+                }
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+function closeModal(){
+    let modalOverlay = document.querySelector('.modal-overlay');
+    modalOverlay.style.display = "none";
+}
+
+let cancelChangesBtn = document.getElementById('cancelChangesBtn');
+cancelChangesBtn.addEventListener('click', () => {
+    closeModal();
+});
+
+async function saveChanges() {
+    try {
+        let changeName = document.getElementById('changeName');
+        let changePrice = document.getElementById('changePrice');
+        let changeImage = document.getElementById('changeImage');
+
+        let newName = changeName.value;
+        let newPrice = parseFloat(changePrice.value);
+        let newImage = changeImage.value;
+
+        const response = await fetch(`/api/products/${editingProductId}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                nameFromUser: newName,
+                priceFromUser: newPrice,
+                imageUrlFromUser: newImage,
+            }),
+            headers: { 'Content-Type': 'application/json' },
+        });
+        if(response.ok){
+            loadProducts("/api/products");
+            closeModal();
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+let saveChangesBtn = document.getElementById('saveChangesBtn');
+saveChangesBtn.addEventListener('click', () => {
+    saveChanges();
+});
 
 async function loadProducts(apiUrl) {
     try {
