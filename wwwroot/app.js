@@ -28,6 +28,34 @@ function showProducts(products) {
     });
 }
 
+async function addProduct(){
+    let nameInput = document.getElementById('productName');
+    let priceInput = document.getElementById('productPrice');
+    let imageInput = document.getElementById('productImage');
+
+    let name = nameInput.value;
+    let price = parseInt(priceInput.value);
+    let imageUrl = imageInput.value;
+    
+    if(name === "" || price <= 0 || isNaN(price) || imageUrl === ""){
+        alert("Будь ласка, заповніть всі поля");
+    } else {
+            let response = await fetch("/api/products", {
+                method: 'POST',
+                body: JSON.stringify({
+                    nameFromUser: name,
+                    priceFromUser: price,
+                    imageUrlFromUser: imageUrl,
+                }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            nameInput.value = "";
+            priceInput.value = "";
+            imageInput.value = "";
+            loadProducts('/api/products');
+    }
+}
+
 async function loadProducts(apiUrl) {
     try {
         let response = await fetch(apiUrl);
@@ -40,3 +68,8 @@ async function loadProducts(apiUrl) {
 }
 
 loadProducts('/api/products');
+
+const addBtn = document.getElementById('addBtn');
+addBtn.addEventListener('click', () => {
+    addProduct();
+});
