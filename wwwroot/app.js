@@ -23,6 +23,9 @@ function showProducts(products) {
         deleteBtn.textContent = "Delete";
         deleteBtn.classList.add('deleteBtn');
         newDiv.appendChild(deleteBtn);
+        deleteBtn.addEventListener('click', () => {
+            deleteProduct(product.id);
+        });
         
         container.appendChild(newDiv);
     });
@@ -53,6 +56,20 @@ async function addProduct(){
             priceInput.value = "";
             imageInput.value = "";
             loadProducts('/api/products');
+    }
+}
+
+async function deleteProduct(id){
+    try {
+        if(!confirm("Are you sure?")){
+            return;
+        }
+        const response = await fetch(`/api/products/${id}`, { method: 'DELETE'});
+        if(response.ok){
+            loadProducts('/api/products');
+        }
+    } catch (error) {
+        console.log(error);
     }
 }
 
