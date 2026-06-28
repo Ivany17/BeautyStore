@@ -18,6 +18,20 @@ h2{
     margin-bottom: 15px;
 }
 
+a {
+    display: inline-block;
+    text-decoration: none;
+    background-color: #00bcd4;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+a:hover {
+    background-color: #0097a7;
+}
+
 .form {
     background-color: #ffffff;
     padding: 20px;
@@ -57,6 +71,11 @@ button{
 
 #addBtn:hover {
     background-color: #0097a7;
+}
+
+.buyBtn{
+    background-color: #28a745;
+    color: white;
 }
 
 .editBtn{
