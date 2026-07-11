@@ -15,11 +15,15 @@ function showProducts(products) {
         let info = document.createElement('p');
         info.textContent = `${product.name} - ${product.price} грн`;
         newDiv.appendChild(info);
+
+        const buttonContainer = document.createElement('div');
+        buttonContainer.classList.add('button-container');
+        newDiv.appendChild(buttonContainer);
         
         let editBtn = document.createElement('button');
         editBtn.textContent = "Edit";
         editBtn.classList.add('editBtn');
-        newDiv.appendChild(editBtn);
+        buttonContainer.appendChild(editBtn);
         editBtn.addEventListener('click', () => {
             editProduct(product);
         });
@@ -27,7 +31,7 @@ function showProducts(products) {
         let deleteBtn = document.createElement('button');
         deleteBtn.textContent = "Delete";
         deleteBtn.classList.add('deleteBtn');
-        newDiv.appendChild(deleteBtn);
+        buttonContainer.appendChild(deleteBtn);
         deleteBtn.addEventListener('click', () => {
             deleteProduct(product.id);
         });
