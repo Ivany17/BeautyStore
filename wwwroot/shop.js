@@ -1,5 +1,24 @@
 let editingProductId = null;
 
+const searchInput = document.getElementById('searchInput');
+const searchBtn = document.getElementById('searchBtn');
+const clearBtn = document.getElementById('clearBtn');
+
+async function searchProducts() {
+    const searchText = searchInput.value;
+    const getResult = await fetch(`/api/products`);
+    const data = await getResult.json();
+    const filteredProducts = data.filter(p => p.name.toLowerCase().includes(searchText.toLowerCase()));
+    showProducts(filteredProducts);
+}
+searchBtn.addEventListener('click', () => {
+    searchProducts();
+});
+clearBtn.addEventListener('click', () => {
+    searchInput.value = "";
+    loadProducts("/api/products");
+});
+
 function showProducts(products) {
     const container = document.getElementById('productContainer');
     container.innerHTML = "";
@@ -12,9 +31,13 @@ function showProducts(products) {
         image.alt = product.name;
         newDiv.appendChild(image);
         
-        let info = document.createElement('p');
-        info.textContent = `${product.name} - ${product.price} грн`;
-        newDiv.appendChild(info);
+        let infoName = document.createElement('h3');
+        infoName.textContent = `${product.name}`;
+        newDiv.appendChild(infoName);
+
+        let infoPrice = document.createElement('h4');
+        infoPrice.textContent = `${product.price} грн`
+        newDiv.appendChild(infoPrice);
         
         let buyBtn = document.createElement('button');
         buyBtn.textContent = "Buy";
