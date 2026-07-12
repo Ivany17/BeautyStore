@@ -12,9 +12,13 @@ function showProducts(products) {
         image.alt = product.name;
         newDiv.appendChild(image);
         
-        let info = document.createElement('p');
-        info.textContent = `${product.name} - ${product.price} грн`;
-        newDiv.appendChild(info);
+        let infoName = document.createElement('h3');
+        infoName.textContent = `${product.name}`;
+        newDiv.appendChild(infoName);
+
+        let infoPrice = document.createElement('h4');
+        infoPrice.textContent = `${product.price} грн`
+        newDiv.appendChild(infoPrice);
 
         const buttonContainer = document.createElement('div');
         buttonContainer.classList.add('button-container');
