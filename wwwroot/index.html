@@ -7,8 +7,15 @@
     <title>BeautyStore</title>
 </head>
 <body>
-    <h1>Beauty Store</h1>
-    <a href="/shop.html">Go to Shop</a>
+    <header class="header">
+        <h1>Beauty Store</h1>
+        <div class="search">
+            <input type="text" id="searchInput" placeholder="Search products...">
+            <button id="searchBtn">Search</button>
+            <button id="clearBtn">Clear</button>
+        </div>
+        <a href="/shop.html">Go to Shop</a>
+    </header>
     <div class="form">
         <input type="text" id="productName" placeholder="Name of the product">
         <input type="text" id="productPrice" placeholder="Price of the product">
@@ -16,11 +23,6 @@
         <button id="addBtn">Add Product</button>
     </div>
 
-    <div class="search">
-        <input type="text" id="searchInput" placeholder="Search products...">
-        <button id="searchBtn">Search</button>
-        <button id="clearBtn">Clear</button>
-    </div>
     <div id="productContainer">
 
     </div>
