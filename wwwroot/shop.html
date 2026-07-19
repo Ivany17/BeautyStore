@@ -7,17 +7,31 @@
     <title>BeautyStore</title>
 </head>
 <body>
-    <h1>Beauty Store</h1>
-    <a href="/index.html">Go to Admin</a>
-
-    <div class="search">
-        <input type="text" id="searchInput" placeholder="Search products...">
-        <button id="searchBtn">Search</button>
-        <button id="clearBtn">Clear</button>
-    </div>
-    <div id="productContainer">
-
-    </div>
+    <header class="header">
+        <h1>Beauty Store</h1>
+        
+        <div class="search">
+            <input type="text" id="searchInput" placeholder="Search products...">
+            <button id="searchBtn">Search</button>
+            <button id="clearBtn">Clear</button>
+        </div>
+        
+        <div class="nav-group">
+            <div class="dropdown">
+                <button>Categories</button>
+                <div class="dropdown-content">
+                    <a href="#" data-category="All">All Categories</a>
+                    <a href="#" data-category="Body Care">Body Care</a>
+                    <a href="#" data-category="Hair Care">Hair Care</a>
+                    <a href="#" data-category="Face Care">Face Care</a>
+                </div>
+            </div>
+            <a href="/index.html">Go to Admin</a>
+        </div>
+    </header>
+    
+    <div id="productContainer"></div>
+    <div id="pagination"></div>
 
     <script src="shop.js"></script>
 </body>

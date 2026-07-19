@@ -7,7 +7,17 @@ var app = builder.Build();
 app.UseDefaultFiles(); // Якщо хтось зайде на / - шукай index.html
 app.UseStaticFiles();  // Віддавай будь-які файли з папки wwwroot
 
-app.MapGet("/api/products", (AppDbContext dbContext) => dbContext.Products);
+app.MapGet("/api/products", (AppDbContext dbContext, int page, int pageSize) =>
+{
+    var totalProducts = dbContext.Products.Count();
+    var totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
+    var productsOnThePage = dbContext.Products.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+    return new
+    {
+        Products = productsOnThePage,
+        TotalPages = totalPages,
+    };
+});
 
 app.MapPost("/api/products", async (AppDbContext dbContext, ProductFromBody productFromBody) =>
 {
@@ -15,7 +25,8 @@ app.MapPost("/api/products", async (AppDbContext dbContext, ProductFromBody prod
     {
         Name = productFromBody.NameFromUser,
         Price = productFromBody.PriceFromUser,
-        ImageUrl = productFromBody.ImageUrlFromUser
+        ImageUrl = productFromBody.ImageUrlFromUser,
+        Category = productFromBody.CategoryFromUser,
     };
     dbContext.Products.Add(newProduct);
     await dbContext.SaveChangesAsync();
@@ -41,6 +52,7 @@ app.MapPut("/api/products/{id}", async (AppDbContext dbContext, int id, ProductF
         change.Name = productFromBody.NameFromUser;
         change.Price = productFromBody.PriceFromUser;
         change.ImageUrl = productFromBody.ImageUrlFromUser;
+        change.Category = productFromBody.CategoryFromUser;
     }
     await dbContext.SaveChangesAsync();
     return change;
@@ -54,6 +66,7 @@ public class Product
     public string Name { get; set; } = "";
     public double Price { get; set; }
     public string ImageUrl { get; set; } = "";
+    public string Category { get; set; } = "";
 }
 
 class ProductFromBody
@@ -61,4 +74,5 @@ class ProductFromBody
     public string NameFromUser { get; set; } = "";
     public double PriceFromUser { get; set; }
     public string ImageUrlFromUser { get; set; } = "";
+    public string CategoryFromUser { get; set; } = "";
 }

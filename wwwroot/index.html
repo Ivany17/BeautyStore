@@ -9,23 +9,41 @@
 <body>
     <header class="header">
         <h1>Beauty Store</h1>
+        
         <div class="search">
             <input type="text" id="searchInput" placeholder="Search products...">
             <button id="searchBtn">Search</button>
             <button id="clearBtn">Clear</button>
         </div>
-        <a href="/shop.html">Go to Shop</a>
+        
+        <div class="nav-group">
+            <div class="dropdown">
+                <button>Categories</button>
+                <div class="dropdown-content">
+                    <a href="#" data-category="All">All Categories</a>
+                    <a href="#" data-category="Body Care">Body Care</a>
+                    <a href="#" data-category="Hair Care">Hair Care</a>
+                    <a href="#" data-category="Face Care">Face Care</a>
+                </div>
+            </div>
+            <a href="/shop.html">Go to Shop</a>
+        </div>
     </header>
     <div class="form">
         <input type="text" id="productName" placeholder="Name of the product">
         <input type="text" id="productPrice" placeholder="Price of the product">
         <input type="text" id="productImage" placeholder="Image URL">
+        <select id="productCategory">
+            <option value="" disabled selected>▾ Select a Category ▾</option>
+            <option value="Body Care">Body Care</option>
+            <option value="Hair Care">Hair Care</option>
+            <option value="Face Care">Face Care</option>
+        </select>
         <button id="addBtn">Add Product</button>
     </div>
 
-    <div id="productContainer">
-
-    </div>
+    <div id="productContainer"></div>
+    <div id="pagination"></div>
 
     <div class="modal-overlay">
         <div class="modal-content">
@@ -33,6 +51,12 @@
             <input id="changeName">
             <input id="changePrice">
             <input id="changeImage">
+            <select id="changeCategory">
+                <option value="" disabled selected>▾ Select a Category ▾</option>
+                <option value="Body Care">Body Care</option>
+                <option value="Hair Care">Hair Care</option>
+                <option value="Face Care">Face Care</option>
+            </select>
             <button id="saveChangesBtn">Save</button>
             <button id="cancelChangesBtn">Cancel</button>
         </div>
