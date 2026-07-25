@@ -7,11 +7,25 @@ var app = builder.Build();
 app.UseDefaultFiles(); // Якщо хтось зайде на / - шукай index.html
 app.UseStaticFiles();  // Віддавай будь-які файли з папки wwwroot
 
+List<Product> cart = new List<Product> { };
+
 app.MapGet("/api/products", (AppDbContext dbContext, int page, int pageSize) =>
 {
     var totalProducts = dbContext.Products.Count();
     var totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
-    var productsOnThePage = dbContext.Products.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+    var productsOnThePage = dbContext.Products.OrderByDescending(p => p.Id).Skip((page - 1) * pageSize).Take(pageSize).ToList();
+    return new
+    {
+        Products = productsOnThePage,
+        TotalPages = totalPages,
+    };
+});
+
+app.MapGet("/api/cart", (AppDbContext dbContext, int page, int pageSize) =>
+{
+    var totalProducts = cart.Count();
+    var totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
+    var productsOnThePage = cart.OrderBy(p => p.Id).Skip((page - 1) * pageSize).Take(pageSize).ToList();
     return new
     {
         Products = productsOnThePage,
@@ -31,6 +45,20 @@ app.MapPost("/api/products", async (AppDbContext dbContext, ProductFromBody prod
     dbContext.Products.Add(newProduct);
     await dbContext.SaveChangesAsync();
     return newProduct;
+});
+
+app.MapPost("/api/cart", async (AppDbContext dbContext, CartItem cartItem) =>
+{
+    var productsInTheCart = dbContext.Products.FirstOrDefault(p => p.Id == cartItem.Id);
+    if (productsInTheCart != null)
+    {
+        cart.Add(productsInTheCart);
+        return Results.Ok();
+    }
+    else
+    {
+        return Results.NotFound();
+    }
 });
 
 app.MapDelete("/api/products/{id}", async (AppDbContext dbContext, int id) =>
@@ -75,4 +103,9 @@ class ProductFromBody
     public double PriceFromUser { get; set; }
     public string ImageUrlFromUser { get; set; } = "";
     public string CategoryFromUser { get; set; } = "";
+}
+
+class CartItem
+{
+    public int Id { get; set; }
 }

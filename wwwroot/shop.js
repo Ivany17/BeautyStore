@@ -53,12 +53,17 @@ function showProducts(products) {
             infoPrice.textContent = `${product.price} грн`
             newDiv.appendChild(infoPrice);
             
-            let buyBtn = document.createElement('button');
-            buyBtn.textContent = "Buy";
-            buyBtn.classList.add('buyBtn');
-            newDiv.appendChild(buyBtn);
-            buyBtn.addEventListener('click', () => {
-                alert(`${product.name} додано в кошик!`);
+            let addToCartBtn = document.createElement('button');
+            addToCartBtn.textContent = "Add to the Cart";
+            addToCartBtn.classList.add('addToCartBtn');
+            newDiv.appendChild(addToCartBtn);
+            addToCartBtn.addEventListener('click', async () => {
+                let response = await fetch("/api/cart", {
+                    method: 'POST',
+                    body: JSON.stringify({ id: product.id }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                alert(`${product.name} added to the Cart!`);
             });
             
             container.appendChild(newDiv);

@@ -368,8 +368,8 @@ select option[value=""] {
     background-color: #e53935; 
 }
 
-/* --- Buy Action Button inside Card --- */
-.buyBtn {
+/* --- Add to cart Action Button inside Card --- */
+.addToCartBtn {
     background-color: #9ed899;
     color: white;
     width: 100%;
@@ -381,15 +381,15 @@ select option[value=""] {
     box-shadow: 0 2px 6px rgba(146, 212, 140, 0.2);
     transition: background-color 0.2s ease, transform 0.1s ease;
 }
-.buyBtn:hover {
+.addToCartBtn:hover {
     background-color: #79c291;
 }
-.buyBtn:active {
+.addToCartBtn:active {
     transform: scale(0.98);
 }
 
 /* ==========================================
-   5. EDIT MODAL WINDOWS
+    5. EDIT MODAL WINDOWS
    ========================================== */
 .modal-overlay {
     display: none;
