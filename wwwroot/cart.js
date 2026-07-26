@@ -2,6 +2,7 @@ async function loadCart(apiUrl, currentPage = 1, pageSize = 25) {
     try {
         let response = await fetch(`${apiUrl}?page=${currentPage}&pageSize=${pageSize}`);
         let value = await response.json();
+        console.log(value);
         renderPagination(currentPage, value.totalPages)
         showCartProducts(value.products);
     } catch (error) {
@@ -23,30 +24,65 @@ function showCartProducts(products) {
             newDiv.classList.add('product-card');
             
             let image = document.createElement('img');
-            image.src = product.imageUrl;
-            image.alt = product.name;
+            image.src = product.productItem.imageUrl;
+            image.alt = product.productItem.name;
             newDiv.appendChild(image);
             
             let infoName = document.createElement('h3');
-            infoName.textContent = `${product.name}`;
+            infoName.textContent = `${product.productItem.name}`;
             newDiv.appendChild(infoName);
 
             let infoCategory = document.createElement('span');
             infoCategory.classList.add('category-tag');
-            infoCategory.textContent = `${product.category}`;
+            infoCategory.textContent = `${product.productItem.category}`;
             newDiv.appendChild(infoCategory);
 
             let infoPrice = document.createElement('h4');
-            infoPrice.textContent = `${product.price} грн`
+            infoPrice.textContent = `${product.productItem.price} грн`
             newDiv.appendChild(infoPrice);
             
-            let buyBtn = document.createElement('button');
-            buyBtn.textContent = "Buy";
-            buyBtn.classList.add('buyBtn');
-            newDiv.appendChild(buyBtn);
-            buyBtn.addEventListener('click', () => {
-                alert(`${product.name} додано в кошик!`);
+            let checkbox= document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.classList.add('checkbox');
+            newDiv.appendChild(checkbox);
+
+let quantityContainer = document.createElement('div');
+            quantityContainer.classList.add('quantity-container');
+
+            let minusBtn = document.createElement('button');
+            minusBtn.classList.add('minusBtn');
+            minusBtn.textContent = '-';
+            minusBtn.addEventListener('click', async () => {
+                let response = await fetch(`/api/cart/${product.productItem.id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ updateQuantity: product.quantity - 1 }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                product.quantity--;
+                quantityItem.textContent = product.quantity;
             });
+            quantityContainer.appendChild(minusBtn);
+
+            let quantityItem = document.createElement('span');
+            quantityItem.id = `quantity-${product.productItem.id}`;
+            quantityItem.classList.add('quantity-number');
+            quantityItem.textContent = product.quantity;
+            quantityContainer.appendChild(quantityItem);
+
+            let plusBtn = document.createElement('button');
+            plusBtn.classList.add('plusBtn');
+            plusBtn.textContent = '+';
+            plusBtn.addEventListener('click', async () => {
+                let response = await fetch(`/api/cart/${product.productItem.id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ updateQuantity: product.quantity + 1 }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                product.quantity++;
+                quantityItem.textContent = product.quantity;
+            });
+            quantityContainer.appendChild(plusBtn);
+            newDiv.appendChild(quantityContainer);
             
             container.appendChild(newDiv);
         });
@@ -64,7 +100,7 @@ async function renderPagination(currentPage, totalPages, pageSize) {
         if(currentPage > 1){
             currentPage--;
         }
-        loadProducts('/api/products', currentPage, pageSize);
+        loadCart('/api/cart', currentPage, pageSize);
     });
 
     const nextBtn = document.createElement('button');
@@ -74,7 +110,7 @@ async function renderPagination(currentPage, totalPages, pageSize) {
         if(currentPage < totalPages){
             currentPage++;
         }
-        loadProducts('/api/products', currentPage, pageSize);
+        loadCart('/api/cart', currentPage, pageSize);
     });
 }
 

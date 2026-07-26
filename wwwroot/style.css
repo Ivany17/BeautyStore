@@ -477,3 +477,90 @@ select option[value=""] {
 #pagination button:active {
     transform: scale(0.98);
 }
+
+/* ==========================================
+   7. CART SPECIFIC STYLES (Checkbox & Selection)
+   ========================================== */
+
+.product-card {
+    position: relative;
+    transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+/* Стилізація кастомного чекбокса */
+.product-card .checkbox {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    background-color: #ffffff;
+    border: 2px solid #00bcd4;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 0;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.product-card .checkbox:hover {
+    border-color: #0097a7;
+    background-color: #e0f7fa;
+}
+
+.product-card .checkbox:checked {
+    background-color: #00bcd4;
+    border-color: #00bcd4;
+}
+
+/* Помітне виділення картки, коли чекбокс позначено */
+.product-card:has(.checkbox:checked) {
+    border: 2px solid #00bcd4;
+    box-shadow: 0 8px 20px rgba(0, 188, 212, 0.35);
+    transform: translateY(-4px);
+}
+
+/* ==========================================
+   8. CART QUANTITY CONTROLS
+   ========================================== */
+.quantity-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 8px 0;
+}
+
+.quantity-container .minusBtn,
+.quantity-container .plusBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #e0f2f1;
+    color: #0097a7;
+    border: 1px solid rgba(0, 188, 212, 0.4);
+    font-size: 16px;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.quantity-container .minusBtn:hover,
+.quantity-container .plusBtn:hover {
+    background-color: #b2dfdb;
+    border-color: #00bcd4;
+}
+
+.quantity-number {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    min-width: 20px;
+    text-align: center;
+}

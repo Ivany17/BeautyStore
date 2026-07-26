@@ -7,7 +7,7 @@ var app = builder.Build();
 app.UseDefaultFiles(); // Якщо хтось зайде на / - шукай index.html
 app.UseStaticFiles();  // Віддавай будь-які файли з папки wwwroot
 
-List<Product> cart = new List<Product> { };
+List<CartItem> cart = new List<CartItem> { };
 
 app.MapGet("/api/products", (AppDbContext dbContext, int page, int pageSize) =>
 {
@@ -25,7 +25,7 @@ app.MapGet("/api/cart", (AppDbContext dbContext, int page, int pageSize) =>
 {
     var totalProducts = cart.Count();
     var totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
-    var productsOnThePage = cart.OrderBy(p => p.Id).Skip((page - 1) * pageSize).Take(pageSize).ToList();
+    var productsOnThePage = cart.OrderByDescending(p => p.AddedAt).Skip((page - 1) * pageSize).Take(pageSize).ToList();
     return new
     {
         Products = productsOnThePage,
@@ -47,12 +47,26 @@ app.MapPost("/api/products", async (AppDbContext dbContext, ProductFromBody prod
     return newProduct;
 });
 
-app.MapPost("/api/cart", async (AppDbContext dbContext, CartItem cartItem) =>
+app.MapPost("/api/cart", (AppDbContext dbContext, AddToCartRequest request) =>
 {
-    var productsInTheCart = dbContext.Products.FirstOrDefault(p => p.Id == cartItem.Id);
+    var productsInTheCart = dbContext.Products.FirstOrDefault(p => p.Id == request.Id);
+    var existingCartItem = cart.FirstOrDefault(c => c.ProductItem!.Id == request.Id);
+    CartItem newCartItem = new CartItem
+    {
+        ProductItem = productsInTheCart,
+        AddedAt = DateTime.Now
+    };
     if (productsInTheCart != null)
     {
-        cart.Add(productsInTheCart);
+        if (existingCartItem != null)
+        {
+            existingCartItem.Quantity++;
+        }
+        else
+        {
+            cart.Add(newCartItem);
+            newCartItem.Quantity = 1;
+        }
         return Results.Ok();
     }
     else
@@ -86,6 +100,18 @@ app.MapPut("/api/products/{id}", async (AppDbContext dbContext, int id, ProductF
     return change;
 });
 
+app.MapPut("/api/cart/{id}", async (AppDbContext dbContext, int id, UpdateQuantityRequest request) =>
+{
+    var newQuantity = cart.FirstOrDefault(p => p.ProductItem!.Id == id);
+    if (newQuantity != null)
+    {
+        newQuantity.Quantity = request.UpdateQuantity;
+    }
+    await dbContext.SaveChangesAsync();
+    return newQuantity;
+});
+
+
 app.Run();
 
 public class Product
@@ -108,4 +134,17 @@ class ProductFromBody
 class CartItem
 {
     public int Id { get; set; }
+    public Product? ProductItem { get; set; } // added the ? to avoid the yellow line
+    public DateTime AddedAt { get; set; }
+    public int Quantity { get; set; }
+}
+
+class AddToCartRequest
+{
+    public int Id { get; set; }
+}
+
+class UpdateQuantityRequest
+{
+    public int UpdateQuantity { get; set; }
 }
