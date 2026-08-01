@@ -5,6 +5,7 @@ async function loadCart(apiUrl, currentPage = 1, pageSize = 25) {
         console.log(value);
         renderPagination(currentPage, value.totalPages)
         showCartProducts(value.products);
+        updateCartTotal();
     } catch (error) {
         console.log(error);
     }
@@ -53,13 +54,17 @@ let quantityContainer = document.createElement('div');
             minusBtn.classList.add('minusBtn');
             minusBtn.textContent = '-';
             minusBtn.addEventListener('click', async () => {
-                let response = await fetch(`/api/cart/${product.productItem.id}`, {
-                    method: 'PUT',
-                    body: JSON.stringify({ updateQuantity: product.quantity - 1 }),
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                product.quantity--;
-                quantityItem.textContent = product.quantity;
+                if(product.quantity - 1 < 1){
+                    quantityItem.textContent = product.quantity;
+                } else {
+                        let response = await fetch(`/api/cart/${product.productItem.id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({ updateQuantity: product.quantity - 1 }),
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    product.quantity--;
+                    quantityItem.textContent = product.quantity;
+                }
             });
             quantityContainer.appendChild(minusBtn);
 
@@ -112,6 +117,18 @@ async function renderPagination(currentPage, totalPages, pageSize) {
         }
         loadCart('/api/cart', currentPage, pageSize);
     });
+}
+
+const cartTotal = document.getElementById('cart-total'); 
+async function updateCartTotal() {
+    let getResponse = await fetch('/api/cart?page=1&pageSize=1000');
+    let value = await getResponse.json();
+    let total = 0;
+    value.products.forEach(p => {
+        let totalSum = p.productItem.price * p.quantity;
+        total += totalSum;
+    });
+    cartTotal.textContent = `Total: ${total} hrn`;
 }
 
 loadCart('/api/cart');
