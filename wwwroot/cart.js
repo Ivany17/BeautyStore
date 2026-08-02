@@ -1,3 +1,8 @@
+const searchInput = document.getElementById('searchInput');
+const searchBtn = document.getElementById('searchBtn');
+const clearBtn = document.getElementById('clearBtn');
+const dataCategory = document.querySelectorAll('[data-category]');
+
 async function loadCart(apiUrl, currentPage = 1, pageSize = 25) {
     try {
         let response = await fetch(`${apiUrl}?page=${currentPage}&pageSize=${pageSize}`);
@@ -33,21 +38,25 @@ function showCartProducts(products) {
             infoName.textContent = `${product.productItem.name}`;
             newDiv.appendChild(infoName);
 
+            let productInfo = document.createElement('div');
+            productInfo.classList.add('product-info');
+            newDiv.appendChild(productInfo);
+
             let infoCategory = document.createElement('span');
             infoCategory.classList.add('category-tag');
             infoCategory.textContent = `${product.productItem.category}`;
-            newDiv.appendChild(infoCategory);
+            productInfo.appendChild(infoCategory);
 
             let infoPrice = document.createElement('h4');
             infoPrice.textContent = `${product.productItem.price} грн`
-            newDiv.appendChild(infoPrice);
+            productInfo.appendChild(infoPrice);
             
             let checkbox= document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.classList.add('checkbox');
             newDiv.appendChild(checkbox);
 
-let quantityContainer = document.createElement('div');
+            let quantityContainer = document.createElement('div');
             quantityContainer.classList.add('quantity-container');
 
             let minusBtn = document.createElement('button');
@@ -64,6 +73,7 @@ let quantityContainer = document.createElement('div');
                     });
                     product.quantity--;
                     quantityItem.textContent = product.quantity;
+                    updateCartTotal();
                 }
             });
             quantityContainer.appendChild(minusBtn);
@@ -85,6 +95,7 @@ let quantityContainer = document.createElement('div');
                 });
                 product.quantity++;
                 quantityItem.textContent = product.quantity;
+                updateCartTotal();
             });
             quantityContainer.appendChild(plusBtn);
             newDiv.appendChild(quantityContainer);
@@ -130,5 +141,46 @@ async function updateCartTotal() {
     });
     cartTotal.textContent = `Total: ${total} hrn`;
 }
+
+// ==========================================
+// 3. SEARCH & FILTER FUNCTIONS
+// ==========================================
+async function searchProducts() {
+    const searchText = searchInput.value;
+    const getResult = await fetch(`/api/cart?page=1&pageSize=1000`);
+    const data = await getResult.json();
+    const filteredProducts = data.products.filter(p => p.productItem.name.toLowerCase().includes(searchText.toLowerCase()));
+    showCartProducts(filteredProducts);
+}
+
+async function filterByCategory(category) {
+    const getResult = await fetch(`/api/cart?page=1&pageSize=1000`);
+    const data = await getResult.json();
+    if(category === "All"){
+        showCartProducts(data.products)
+    } else {
+        const filteredData = data.products.filter(d => d.productItem.category === category);
+        showCartProducts(filteredData);
+    }
+}
+
+// ==========================================
+// 4. EVENT LISTENERS
+// ==========================================
+searchBtn.addEventListener('click', () => {
+    searchProducts();
+});
+
+clearBtn.addEventListener('click', () => {
+    searchInput.value = "";
+    loadCart("/api/cart");
+});
+
+dataCategory.forEach(cat => {
+    cat.addEventListener('click', () => {
+        const category = cat.getAttribute('data-category');
+        filterByCategory(category);
+    });
+});
 
 loadCart('/api/cart');

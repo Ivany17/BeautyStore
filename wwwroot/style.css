@@ -40,6 +40,8 @@ button {
    2. HEADER & NAVIGATION LAYOUT
    ========================================== */
 .header {
+    position: relative;
+    z-index: 9999;
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     padding: 15px 40px; 
@@ -71,8 +73,8 @@ button {
     max-width: 450px;
     width: 450px; 
     background-color: transparent; 
-    border: none;                  
-    padding: 0;                    
+    border: none;                     
+    padding: 0;                       
     margin: 0;
     justify-self: center; 
 }
@@ -139,7 +141,7 @@ button {
 .header .nav-group {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 4px; 
     justify-self: end; 
 }
 
@@ -159,9 +161,40 @@ button {
     background-color: #0097a7;
 }
 
+/* --- Elegant Cart Link Styles --- */
+.nav-group a.cart-link {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    color: #0097a7;
+    background-color: #e0f2f1;
+    border: 1px solid rgba(0, 188, 212, 0.3);
+    border-radius: 4px;
+    height: 38px;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: none;
+    transform: none;
+    transition: background-color 0.2s;
+}
+
+.nav-group a.cart-link:hover {
+    background-color: #b2dfdb;
+    color: #007a8a;
+    border-color: rgba(0, 188, 212, 0.3);
+    box-shadow: none;
+    transform: none;
+}
+
 /* --- Navigation Dropdown --- */
 .dropdown {
     position: relative;
+    z-index: 9999;
 }
 
 .dropdown button {
@@ -193,12 +226,13 @@ button {
     position: absolute;
     top: 100%;
     left: 0;
-    background-color: white;
-    min-width: 160px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    z-index: 10;
+    background-color: #ffffff;
+    min-width: 180px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 188, 212, 0.2);
+    border-radius: 8px;
+    z-index: 10000;
 }
-
 .dropdown:hover .dropdown-content {
     display: block;
 }
@@ -306,6 +340,9 @@ select option[value=""] {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     gap: 12px; 
     box-sizing: border-box;
+    position: relative;
+    transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    z-index: 0;
 }
 
 .product-card img {
@@ -319,6 +356,14 @@ select option[value=""] {
     font-size: 18px;
     color: #333;
     margin: 0;
+    flex-grow: 1;
+}
+
+.product-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
 }
 
 .category-tag {
@@ -329,17 +374,19 @@ select option[value=""] {
     font-size: 12px;
     display: inline-block;
     margin: 0 auto;
+    min-height: 24px;
+    line-height: 24px;
 }
 
 .product-card h4 {
     margin: 0;
     color: #0097a7;
     font-size: 16px;
+    margin-top: 4px;
 }
 
 /* --- Admin Control Container inside Card --- */
 .button-container {
-    margin-top: auto; 
     display: flex; 
     gap: 10px; 
     justify-content: center;
@@ -376,7 +423,7 @@ select option[value=""] {
     padding: 10px 0;
     margin: 5px 0 0 0;
     font-size: 15px;
-    font-weight: bold;         
+    font-weight: bold;        
     border-radius: 4px;
     box-shadow: 0 2px 6px rgba(146, 212, 140, 0.2);
     transition: background-color 0.2s ease, transform 0.1s ease;
@@ -389,7 +436,7 @@ select option[value=""] {
 }
 
 /* ==========================================
-    5. EDIT MODAL WINDOWS
+   5. EDIT MODAL WINDOWS
    ========================================== */
 .modal-overlay {
     display: none;
@@ -482,12 +529,7 @@ select option[value=""] {
    7. CART SPECIFIC STYLES (Checkbox & Selection)
    ========================================== */
 
-.product-card {
-    position: relative;
-    transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-}
-
-/* Стилізація кастомного чекбокса */
+/* Custom checkbox styling */
 .product-card .checkbox {
     position: absolute;
     top: 12px;
@@ -514,7 +556,7 @@ select option[value=""] {
     border-color: #00bcd4;
 }
 
-/* Помітне виділення картки, коли чекбокс позначено */
+/* Highlight card when checkbox is checked */
 .product-card:has(.checkbox:checked) {
     border: 2px solid #00bcd4;
     box-shadow: 0 8px 20px rgba(0, 188, 212, 0.35);
@@ -563,4 +605,21 @@ select option[value=""] {
     color: #333;
     min-width: 20px;
     text-align: center;
+}
+
+/* ==========================================
+   9. CART TOTAL STYLING
+   ========================================== */
+#cart-total {
+    display: inline-block;
+    background: linear-gradient(135deg, #e0f7fa 0%, #e0f2f1 100%);
+    color: #00695c;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 12px 24px;
+    margin: 20px auto;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 188, 212, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.15);
+    transition: all 0.2s ease;
 }

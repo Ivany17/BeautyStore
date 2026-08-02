@@ -47,14 +47,18 @@ function showProducts(products) {
             infoName.textContent = `${product.name}`;
             newDiv.appendChild(infoName);
 
+            let productInfo = document.createElement('div');
+            productInfo.classList.add('product-info');
+            newDiv.appendChild(productInfo);
+
             let infoCategory = document.createElement('span');
             infoCategory.classList.add('category-tag');
             infoCategory.textContent = `${product.category}`;
-            newDiv.appendChild(infoCategory);
+            productInfo.appendChild(infoCategory);
 
             let infoPrice = document.createElement('h4');
             infoPrice.textContent = `${product.price} грн`
-            newDiv.appendChild(infoPrice);
+            productInfo.appendChild(infoPrice);
 
             const buttonContainer = document.createElement('div');
             buttonContainer.classList.add('button-container');
