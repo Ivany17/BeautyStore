@@ -11,6 +11,7 @@ async function loadCart(apiUrl, currentPage = 1, pageSize = 25) {
         renderPagination(currentPage, value.totalPages)
         showCartProducts(value.products);
         updateCartTotal();
+        updateBuyButton();
     } catch (error) {
         console.log(error);
     }
@@ -48,12 +49,16 @@ function showCartProducts(products) {
             productInfo.appendChild(infoCategory);
 
             let infoPrice = document.createElement('h4');
-            infoPrice.textContent = `${product.productItem.price} грн`
+            infoPrice.textContent = `${product.productItem.price} грн`;
+            infoPrice.classList.add('product-price');
             productInfo.appendChild(infoPrice);
             
             let checkbox= document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.classList.add('checkbox');
+            checkbox.addEventListener('change', () => {
+                updateBuyButton();
+            });
             newDiv.appendChild(checkbox);
 
             let quantityContainer = document.createElement('div');
@@ -74,6 +79,7 @@ function showCartProducts(products) {
                     product.quantity--;
                     quantityItem.textContent = product.quantity;
                     updateCartTotal();
+                    updateBuyButton();
                 }
             });
             quantityContainer.appendChild(minusBtn);
@@ -96,6 +102,7 @@ function showCartProducts(products) {
                 product.quantity++;
                 quantityItem.textContent = product.quantity;
                 updateCartTotal();
+                updateBuyButton();
             });
             quantityContainer.appendChild(plusBtn);
             newDiv.appendChild(quantityContainer);
@@ -182,5 +189,27 @@ dataCategory.forEach(cat => {
         filterByCategory(category);
     });
 });
+
+const buyBtn = document.getElementById('buyBtn');
+buyBtn.addEventListener('click', () => {
+    updateBuyButton();
+});
+
+function updateBuyButton() {
+    const checkboxProducts = document.querySelectorAll('input[type="checkbox"]');
+    const checkedProducts = Array.from(checkboxProducts).filter(p => p.checked === true);
+    let totalPrice = 0;
+    checkedProducts.forEach(product => {
+        const productCard = product.closest('.product-card');
+        const productPrice = productCard.querySelector('.product-price');
+        const priceText = productPrice.textContent;
+        const priceNumber = parseInt(priceText);
+        const productQuantity = productCard.querySelector('.quantity-number');
+        const quantityText = productQuantity.textContent;
+        const quantityNumber = parseInt(quantityText);
+        totalPrice += priceNumber * quantityNumber;
+        buyBtn.textContent = `Buy for ${totalPrice} hrn`;
+    });
+}
 
 loadCart('/api/cart');
