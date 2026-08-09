@@ -8,6 +8,7 @@ const searchBtn = document.getElementById('searchBtn');
 const clearBtn = document.getElementById('clearBtn');
 const dataCategory = document.querySelectorAll('[data-category]');
 
+
 // ==========================================
 // 2. CORE FETCHING & RENDERING FUNCTIONS
 // ==========================================
@@ -15,7 +16,7 @@ async function loadProducts(apiUrl, currentPage = 1, pageSize = 25) {
     try {
         let response = await fetch(`${apiUrl}?page=${currentPage}&pageSize=${pageSize}`);
         let value = await response.json();
-        renderPagination(currentPage, value.totalPages)
+        renderPagination(currentPage, value.totalPages, pageSize);
         showProducts(value.products);
     } catch (error) {
         console.log(error);
@@ -25,7 +26,8 @@ async function loadProducts(apiUrl, currentPage = 1, pageSize = 25) {
 function showProducts(products) {
     const container = document.getElementById('productContainer');
     container.innerHTML = "";
-    if (products.length === 0){
+    
+    if (products.length === 0) {
         const emptyMessage = document.createElement('div');
         emptyMessage.classList.add('empty-message');
         emptyMessage.textContent = `No products found`;
@@ -54,7 +56,7 @@ function showProducts(products) {
             productInfo.appendChild(infoCategory);
 
             let infoPrice = document.createElement('h4');
-            infoPrice.textContent = `${product.price} грн`
+            infoPrice.textContent = `${product.price} ₴`;
             productInfo.appendChild(infoPrice);
             
             let addToCartBtn = document.createElement('button');
@@ -83,7 +85,7 @@ async function renderPagination(currentPage, totalPages, pageSize) {
     prevBtn.textContent = `Prev`;
     pagination.appendChild(prevBtn);
     prevBtn.addEventListener('click', () => {
-        if(currentPage > 1){
+        if (currentPage > 1) {
             currentPage--;
         }
         loadProducts('/api/products', currentPage, pageSize);
@@ -93,12 +95,13 @@ async function renderPagination(currentPage, totalPages, pageSize) {
     nextBtn.textContent = `Next`;
     pagination.appendChild(nextBtn);
     nextBtn.addEventListener('click', () => {
-        if(currentPage < totalPages){
+        if (currentPage < totalPages) {
             currentPage++;
         }
         loadProducts('/api/products', currentPage, pageSize);
     });
 }
+
 
 // ==========================================
 // 3. SEARCH & FILTER FUNCTIONS
@@ -114,13 +117,14 @@ async function searchProducts() {
 async function filterByCategory(category) {
     const getResult = await fetch(`/api/products?page=1&pageSize=1000`);
     const data = await getResult.json();
-    if(category === "All"){
-        showProducts(data.products)
+    if (category === "All") {
+        showProducts(data.products);
     } else {
         const filteredData = data.products.filter(d => d.category === category);
         showProducts(filteredData);
     }
 }
+
 
 // ==========================================
 // 4. EVENT LISTENERS
@@ -140,6 +144,7 @@ dataCategory.forEach(cat => {
         filterByCategory(category);
     });
 });
+
 
 // ==========================================
 // 5. APPLICATION INITIALIZATION

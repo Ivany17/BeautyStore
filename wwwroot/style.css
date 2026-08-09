@@ -1,5 +1,5 @@
 /* ==========================================
-   1. GENERAL STYLES & BASE COMPONENTS
+   1. GLOBAL STYLES & BASE COMPONENTS
    ========================================== */
 body {
     background-color: #e0f7fa;
@@ -36,6 +36,7 @@ button {
     transition: background-color 0.2s;
 }
 
+
 /* ==========================================
    2. HEADER & NAVIGATION LAYOUT
    ========================================== */
@@ -50,7 +51,7 @@ button {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-columns: 280px auto 280px; 
     align-items: center;
     gap: 20px;
 }
@@ -61,8 +62,25 @@ button {
     color: #b38728;
     font-size: 28px;
     letter-spacing: 2px;
-    white-space: nowrap;
     justify-self: start;
+    white-space: nowrap;
+}
+
+.header a {
+    display: inline-block;
+    text-decoration: none;
+    background-color: #00bcd4;
+    color: white;
+    padding: 10px 22px;
+    border-radius: 4px;
+    font-weight: bold;
+    margin: 0;
+    white-space: nowrap;
+    transition: background-color 0.2s;
+}
+
+.header a:hover {
+    background-color: #0097a7;
 }
 
 /* --- Search Bar --- */
@@ -73,8 +91,8 @@ button {
     max-width: 450px;
     width: 450px; 
     background-color: transparent; 
-    border: none;                     
-    padding: 0;                       
+    border: none;                                 
+    padding: 0;                                 
     margin: 0;
     justify-self: center; 
 }
@@ -109,6 +127,7 @@ button {
     color: white;
     border: 1px solid transparent; 
 }
+
 #searchBtn:hover {
     background-color: #0097a7;
 }
@@ -133,6 +152,7 @@ button {
     align-items: center;
     justify-content: center;
 }
+
 #clearBtn:hover {
     background-color: #b2dfdb;
 }
@@ -143,22 +163,6 @@ button {
     align-items: center;
     gap: 4px; 
     justify-self: end; 
-}
-
-.header a {
-    display: inline-block;
-    text-decoration: none;
-    background-color: #00bcd4;
-    color: white;
-    padding: 10px 22px;
-    border-radius: 4px;
-    font-weight: bold;
-    margin: 0;
-    white-space: nowrap;
-    transition: background-color 0.2s;
-}
-.header a:hover {
-    background-color: #0097a7;
 }
 
 /* --- Elegant Cart Link Styles --- */
@@ -217,6 +221,7 @@ button {
     align-items: center;
     justify-content: center;
 }
+
 .dropdown button:hover {
     background-color: #b2dfdb;
 }
@@ -233,6 +238,7 @@ button {
     border-radius: 8px;
     z-index: 10000;
 }
+
 .dropdown:hover .dropdown-content {
     display: block;
 }
@@ -249,11 +255,13 @@ button {
     border-bottom: 1px solid rgba(0, 188, 212, 0.1);
     transition: background-color 0.2s, color 0.2s;
 }
+
 .dropdown-content a:hover {
     background-color: #d1e7e7;
     color: #0097a7;
     border-radius: 4px;
 }
+
 
 /* ==========================================
    3. FORMS & INTERACTIVE INPUTS
@@ -276,6 +284,7 @@ button {
     margin: 5px 0;
     box-sizing: border-box;
 }
+
 #addBtn:hover {
     background-color: #0097a7;
 }
@@ -301,6 +310,7 @@ select {
     padding: 10px 16px;
     margin-bottom: 15px; 
 }
+
 select:hover {
     background-color: #b2dfdb;
 }
@@ -315,6 +325,7 @@ select option {
 select option[value=""] {
     color: gray;
 }
+
 
 /* ==========================================
    4. PRODUCT GRID & CARDS ARCHITECTURE
@@ -359,6 +370,13 @@ select option[value=""] {
     flex-grow: 1;
 }
 
+.product-card h4 {
+    margin: 0;
+    color: #0097a7;
+    font-size: 16px;
+    margin-top: 4px;
+}
+
 .product-info {
     display: flex;
     flex-direction: column;
@@ -378,14 +396,7 @@ select option[value=""] {
     line-height: 24px;
 }
 
-.product-card h4 {
-    margin: 0;
-    color: #0097a7;
-    font-size: 16px;
-    margin-top: 4px;
-}
-
-/* --- Admin Control Container inside Card --- */
+/* --- Admin Control Buttons inside Card --- */
 .button-container {
     display: flex; 
     gap: 10px; 
@@ -403,6 +414,7 @@ select option[value=""] {
     background-color: #4db6ac; 
     color: white; 
 }
+
 .editBtn:hover { 
     background-color: #0097a7; 
 }
@@ -411,6 +423,7 @@ select option[value=""] {
     background-color: #e57373; 
     color: white; 
 }
+
 .deleteBtn:hover { 
     background-color: #e53935; 
 }
@@ -428,12 +441,15 @@ select option[value=""] {
     box-shadow: 0 2px 6px rgba(146, 212, 140, 0.2);
     transition: background-color 0.2s ease, transform 0.1s ease;
 }
+
 .addToCartBtn:hover {
     background-color: #79c291;
 }
+
 .addToCartBtn:active {
     transform: scale(0.98);
 }
+
 
 /* ==========================================
    5. EDIT MODAL WINDOWS
@@ -467,6 +483,7 @@ select option[value=""] {
     color: white; 
     margin-top: 10px;
 }
+
 #saveChangesBtn:hover { 
     background-color: #0097a7; 
 }
@@ -475,61 +492,15 @@ select option[value=""] {
     background-color: #b2dfdb; 
     color: #007a8a; 
 }
+
 #cancelChangesBtn:hover { 
     background-color: #80cbc4; 
 }
 
-/* ==========================================
-   6. UTILITY CLASSES & PAGINATION
-   ========================================== */
-.empty-message {
-    font-size: 20px;
-    color: #999;
-    margin: 40px 0;
-}
-
-#pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    margin: 40px auto 20px auto;
-    padding: 0 20px;
-    max-width: 1200px; 
-    width: 100%;
-}
-
-#pagination button {
-    font-family: Arial, sans-serif;
-    font-weight: bold;
-    font-size: 14px;
-    background-color: #ffffff;
-    color: #0097a7;
-    border: 1px solid #00bcd4;
-    border-radius: 4px;
-    min-width: 90px;
-    height: 38px;
-    margin: 0;
-    padding: 0 16px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    transition: background-color 0.2s, color 0.2s, transform 0.1s ease;
-}
-#pagination button:hover {
-    background-color: #e0f2f1;
-    color: #007a8a;
-}
-#pagination button:active {
-    transform: scale(0.98);
-}
 
 /* ==========================================
-   7. CART SPECIFIC STYLES (Checkbox & Selection)
+   6. CART SPECIFIC STYLES (Selection & Checkbox)
    ========================================== */
-
-/* Custom checkbox styling */
 .product-card .checkbox {
     position: absolute;
     top: 12px;
@@ -556,15 +527,49 @@ select option[value=""] {
     border-color: #00bcd4;
 }
 
-/* Highlight card when checkbox is checked */
 .product-card:has(.checkbox:checked) {
     border: 2px solid #00bcd4;
     box-shadow: 0 8px 20px rgba(0, 188, 212, 0.35);
     transform: translateY(-4px);
 }
 
+/* --- Cart Remove Button --- */
+.product-card .remove-btn {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 22px;
+    height: 22px;
+    background-color: #ffffff;
+    color: #b2dfdb;
+    border: 2px solid #b2dfdb;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 2;
+    box-sizing: border-box;
+}
+
+.product-card .remove-btn:hover {
+    background-color: #ffebee;
+    color: #e53935;
+    border-color: #e53935;
+}
+
+.product-card .remove-btn:active {
+    transform: scale(0.92);
+}
+
+
 /* ==========================================
-   8. CART QUANTITY CONTROLS
+   7. CART QUANTITY CONTROLS
    ========================================== */
 .quantity-container {
     display: flex;
@@ -607,8 +612,9 @@ select option[value=""] {
     text-align: center;
 }
 
+
 /* ==========================================
-   9. CART TOTAL STYLING
+   8. CART TOTAL & ACTIONS (Buy Button)
    ========================================== */
 #cart-total {
     display: inline-block;
@@ -622,4 +628,82 @@ select option[value=""] {
     border: 1px solid rgba(0, 188, 212, 0.3);
     box-shadow: 0 4px 12px rgba(0, 188, 212, 0.15);
     transition: all 0.2s ease;
+}
+
+#buyBtn {
+    display: inline-block;
+    min-width: 250px;
+    margin: 20px auto;
+    padding: 12px 28px;
+    background-color: #00bcd4;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.25);
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+}
+
+#buyBtn:hover {
+    background-color: #0097a7;
+    box-shadow: 0 6px 16px rgba(0, 188, 212, 0.35);
+    transform: translateY(-2px);
+}
+
+#buyBtn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 188, 212, 0.2);
+}
+
+
+/* ==========================================
+   9. UTILITY CLASSES & PAGINATION
+   ========================================== */
+.empty-message {
+    font-size: 20px;
+    color: #999;
+    margin: 40px 0;
+}
+
+#pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin: 40px auto 20px auto;
+    padding: 0 20px;
+    max-width: 1200px; 
+    width: 100%;
+}
+
+#pagination button {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    background-color: #ffffff;
+    color: #0097a7;
+    border: 1px solid #00bcd4;
+    border-radius: 4px;
+    min-width: 90px;
+    height: 38px;
+    margin: 0;
+    padding: 0 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s, color 0.2s, transform 0.1s ease;
+}
+
+#pagination button:hover {
+    background-color: #e0f2f1;
+    color: #007a8a;
+}
+
+#pagination button:active {
+    transform: scale(0.98);
 }

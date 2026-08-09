@@ -11,6 +11,7 @@ const saveChangesBtn = document.getElementById('saveChangesBtn');
 const cancelChangesBtn = document.getElementById('cancelChangesBtn');
 const dataCategory = document.querySelectorAll('[data-category]');
 
+
 // ==========================================
 // 2. CORE FETCHING & RENDERING FUNCTIONS
 // ==========================================
@@ -18,7 +19,7 @@ async function loadProducts(apiUrl, currentPage = 1, pageSize = 25) {
     try {
         let response = await fetch(`${apiUrl}?page=${currentPage}&pageSize=${pageSize}`);
         let value = await response.json();
-        renderPagination(currentPage, value.totalPages)
+        renderPagination(currentPage, value.totalPages, pageSize);
         showProducts(value.products);
     } catch (error) {
         console.log(error);
@@ -28,7 +29,8 @@ async function loadProducts(apiUrl, currentPage = 1, pageSize = 25) {
 function showProducts(products) {
     const container = document.getElementById('productContainer');
     container.innerHTML = "";
-    if (products.length === 0){
+    
+    if (products.length === 0) {
         const emptyMessage = document.createElement('div');
         emptyMessage.classList.add('empty-message');
         emptyMessage.textContent = `No products found`;
@@ -57,7 +59,7 @@ function showProducts(products) {
             productInfo.appendChild(infoCategory);
 
             let infoPrice = document.createElement('h4');
-            infoPrice.textContent = `${product.price} грн`
+            infoPrice.textContent = `${product.price} ₴`;
             productInfo.appendChild(infoPrice);
 
             const buttonContainer = document.createElement('div');
@@ -77,7 +79,7 @@ function showProducts(products) {
             deleteBtn.classList.add('deleteBtn');
             buttonContainer.appendChild(deleteBtn);
             deleteBtn.addEventListener('click', () => {
-                deleteProduct(product.id);
+                deleteProduct(product.id, product.name);
             });
             
             container.appendChild(newDiv);
@@ -93,7 +95,7 @@ async function renderPagination(currentPage, totalPages, pageSize) {
     prevBtn.textContent = `Prev`;
     pagination.appendChild(prevBtn);
     prevBtn.addEventListener('click', () => {
-        if(currentPage > 1){
+        if (currentPage > 1) {
             currentPage--;
         }
         loadProducts('/api/products', currentPage, pageSize);
@@ -103,17 +105,18 @@ async function renderPagination(currentPage, totalPages, pageSize) {
     nextBtn.textContent = `Next`;
     pagination.appendChild(nextBtn);
     nextBtn.addEventListener('click', () => {
-        if(currentPage < totalPages){
+        if (currentPage < totalPages) {
             currentPage++;
         }
         loadProducts('/api/products', currentPage, pageSize);
     });
 }
 
+
 // ==========================================
 // 3. PRODUCT MANAGEMENT FUNCTIONS (CRUD & MODAL)
 // ==========================================
-async function addProduct(){
+async function addProduct() {
     let nameInput = document.getElementById('productName');
     let priceInput = document.getElementById('productPrice');
     let imageInput = document.getElementById('productImage');
@@ -140,6 +143,7 @@ async function addProduct(){
         alert("Please select a category");
         return;
     }
+
     let response = await fetch("/api/products", {
         method: 'POST',
         body: JSON.stringify({
@@ -150,6 +154,7 @@ async function addProduct(){
         }),
         headers: { 'Content-Type': 'application/json' }
     });
+
     nameInput.value = "";
     priceInput.value = "";
     imageInput.value = "";
@@ -157,7 +162,7 @@ async function addProduct(){
     loadProducts('/api/products');
 }
 
-async function editProduct(product){
+async function editProduct(product) {
     try {
         let modalOverlay = document.querySelector('.modal-overlay');
         let changeName = document.getElementById('changeName');
@@ -174,16 +179,17 @@ async function editProduct(product){
 
         modalOverlay.style.display = "flex";
 
-        document.addEventListener('keydown', (e) =>{
-            if(modalOverlay.style.display === "flex"){
-                if(e.key === 'Escape'){
+        document.addEventListener('keydown', (e) => {
+            if (modalOverlay.style.display === "flex") {
+                if (e.key === 'Escape') {
                     closeModal();
                 }
             }
         });
+
         document.addEventListener('keydown', (e) => {
-            if(modalOverlay.style.display === "flex"){
-                if(e.key === 'Enter'){
+            if (modalOverlay.style.display === "flex") {
+                if (e.key === 'Enter') {
                     saveChanges();
                 }
             }
@@ -215,7 +221,8 @@ async function saveChanges() {
             }),
             headers: { 'Content-Type': 'application/json' },
         });
-        if(response.ok){
+
+        if (response.ok) {
             loadProducts("/api/products");
             closeModal();
         }
@@ -224,13 +231,13 @@ async function saveChanges() {
     }
 }
 
-async function deleteProduct(id){
+async function deleteProduct(id, name) {
     try {
-        if(!confirm("Are you sure?")){
+        if (!confirm(`Are you sure you want to delete the ${name}?`)) {
             return;
         }
-        const response = await fetch(`/api/products/${id}`, { method: 'DELETE'});
-        if(response.ok){
+        const response = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+        if (response.ok) {
             loadProducts('/api/products');
         }
     } catch (error) {
@@ -238,10 +245,11 @@ async function deleteProduct(id){
     }
 }
 
-function closeModal(){
+function closeModal() {
     let modalOverlay = document.querySelector('.modal-overlay');
     modalOverlay.style.display = "none";
 }
+
 
 // ==========================================
 // 4. SEARCH & FILTER FUNCTIONS
@@ -257,13 +265,14 @@ async function searchProducts() {
 async function filterByCategory(category) {
     const getResult = await fetch(`/api/products?page=1&pageSize=1000`);
     const data = await getResult.json();
-    if(category === "All"){
-        showProducts(data.products)
+    if (category === "All") {
+        showProducts(data.products);
     } else {
         const filteredData = data.products.filter(d => d.category === category);
         showProducts(filteredData);
     }
 }
+
 
 // ==========================================
 // 5. EVENT LISTENERS
@@ -295,6 +304,7 @@ dataCategory.forEach(cat => {
         filterByCategory(category);
     });
 });
+
 
 // ==========================================
 // 6. APPLICATION INITIALIZATION

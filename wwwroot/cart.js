@@ -1,14 +1,23 @@
+// ==========================================
+// 1. GLOBAL VARIABLES & DOM ELEMENTS
+// ==========================================
 const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
 const clearBtn = document.getElementById('clearBtn');
 const dataCategory = document.querySelectorAll('[data-category]');
+const cartTotal = document.getElementById('cart-total');
+const buyBtn = document.getElementById('buyBtn');
 
+
+// ==========================================
+// 2. CORE FETCHING & RENDERING FUNCTIONS
+// ==========================================
 async function loadCart(apiUrl, currentPage = 1, pageSize = 25) {
     try {
         let response = await fetch(`${apiUrl}?page=${currentPage}&pageSize=${pageSize}`);
         let value = await response.json();
         console.log(value);
-        renderPagination(currentPage, value.totalPages)
+        renderPagination(currentPage, value.totalPages, pageSize);
         showCartProducts(value.products);
         updateCartTotal();
         updateBuyButton();
@@ -20,15 +29,24 @@ async function loadCart(apiUrl, currentPage = 1, pageSize = 25) {
 function showCartProducts(products) {
     const container = document.getElementById('productContainer');
     container.innerHTML = "";
-    if (products.length === 0){
+    
+    if (products.length === 0) {
         const emptyMessage = document.createElement('div');
         emptyMessage.classList.add('empty-message');
-        emptyMessage.textContent = `No products found`;
+        emptyMessage.textContent = `Your cart is empty. Add some products!`;
         container.appendChild(emptyMessage);
     } else {
         products.forEach(product => {
             let newDiv = document.createElement('div');
             newDiv.classList.add('product-card');
+
+            let removeBtn = document.createElement('button');
+            removeBtn.classList.add('remove-btn');
+            removeBtn.textContent = '×';
+            removeBtn.addEventListener('click', () => {
+                removeFromCart(product.productItem.id, product.productItem.name);
+            });
+            newDiv.appendChild(removeBtn);
             
             let image = document.createElement('img');
             image.src = product.productItem.imageUrl;
@@ -49,13 +67,14 @@ function showCartProducts(products) {
             productInfo.appendChild(infoCategory);
 
             let infoPrice = document.createElement('h4');
-            infoPrice.textContent = `${product.productItem.price} грн`;
+            infoPrice.textContent = `${product.productItem.price} ₴`;
             infoPrice.classList.add('product-price');
             productInfo.appendChild(infoPrice);
             
-            let checkbox= document.createElement('input');
+            let checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.classList.add('checkbox');
+            checkbox.setAttribute('data-id', product.productItem.id);
             checkbox.addEventListener('change', () => {
                 updateBuyButton();
             });
@@ -68,10 +87,10 @@ function showCartProducts(products) {
             minusBtn.classList.add('minusBtn');
             minusBtn.textContent = '-';
             minusBtn.addEventListener('click', async () => {
-                if(product.quantity - 1 < 1){
+                if (product.quantity - 1 < 1) {
                     quantityItem.textContent = product.quantity;
                 } else {
-                        let response = await fetch(`/api/cart/${product.productItem.id}`, {
+                    let response = await fetch(`/api/cart/${product.productItem.id}`, {
                         method: 'PUT',
                         body: JSON.stringify({ updateQuantity: product.quantity - 1 }),
                         headers: { 'Content-Type': 'application/json' }
@@ -120,7 +139,7 @@ async function renderPagination(currentPage, totalPages, pageSize) {
     prevBtn.textContent = `Prev`;
     pagination.appendChild(prevBtn);
     prevBtn.addEventListener('click', () => {
-        if(currentPage > 1){
+        if (currentPage > 1) {
             currentPage--;
         }
         loadCart('/api/cart', currentPage, pageSize);
@@ -130,14 +149,17 @@ async function renderPagination(currentPage, totalPages, pageSize) {
     nextBtn.textContent = `Next`;
     pagination.appendChild(nextBtn);
     nextBtn.addEventListener('click', () => {
-        if(currentPage < totalPages){
+        if (currentPage < totalPages) {
             currentPage++;
         }
         loadCart('/api/cart', currentPage, pageSize);
     });
 }
 
-const cartTotal = document.getElementById('cart-total'); 
+
+// ==========================================
+// 3. CART CALCULATIONS & ACTIONS
+// ==========================================
 async function updateCartTotal() {
     let getResponse = await fetch('/api/cart?page=1&pageSize=1000');
     let value = await getResponse.json();
@@ -146,11 +168,53 @@ async function updateCartTotal() {
         let totalSum = p.productItem.price * p.quantity;
         total += totalSum;
     });
-    cartTotal.textContent = `Total: ${total} hrn`;
+    cartTotal.textContent = `Total: ${total} ₴`;
 }
 
+function updateBuyButton() {
+    const checkboxProducts = document.querySelectorAll('input[type="checkbox"]');
+    const checkedProducts = Array.from(checkboxProducts).filter(p => p.checked === true);
+    const selectedIds = [];
+    let totalPrice = 0;
+    
+    if (checkedProducts.length === 0) {
+        buyBtn.textContent = `Buy for 0 ₴`;
+    }
+    
+    checkedProducts.forEach(product => {
+        const id = product.dataset.id;
+        const productCard = product.closest('.product-card');
+        const productPrice = productCard.querySelector('.product-price');
+        const priceText = productPrice.textContent;
+        const priceNumber = parseInt(priceText);
+        const productQuantity = productCard.querySelector('.quantity-number');
+        const quantityText = productQuantity.textContent;
+        const quantityNumber = parseInt(quantityText);
+        
+        totalPrice += priceNumber * quantityNumber;
+        buyBtn.textContent = `Buy for ${totalPrice} ₴`;
+        selectedIds.push(id);
+    });
+    return selectedIds;
+}
+
+async function removeFromCart(id, name) {
+    try {
+        if (!confirm(`Are you sure you want to delete the ${name}?`)) {
+            return;
+        }
+        const response = await fetch(`/api/cart/${id}`, { method: 'DELETE' });
+        if (response.ok) {
+            loadCart('/api/cart');
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
 // ==========================================
-// 3. SEARCH & FILTER FUNCTIONS
+// 4. SEARCH & FILTER FUNCTIONS
 // ==========================================
 async function searchProducts() {
     const searchText = searchInput.value;
@@ -163,16 +227,17 @@ async function searchProducts() {
 async function filterByCategory(category) {
     const getResult = await fetch(`/api/cart?page=1&pageSize=1000`);
     const data = await getResult.json();
-    if(category === "All"){
-        showCartProducts(data.products)
+    if (category === "All") {
+        showCartProducts(data.products);
     } else {
         const filteredData = data.products.filter(d => d.productItem.category === category);
         showCartProducts(filteredData);
     }
 }
 
+
 // ==========================================
-// 4. EVENT LISTENERS
+// 5. EVENT LISTENERS
 // ==========================================
 searchBtn.addEventListener('click', () => {
     searchProducts();
@@ -190,26 +255,21 @@ dataCategory.forEach(cat => {
     });
 });
 
-const buyBtn = document.getElementById('buyBtn');
-buyBtn.addEventListener('click', () => {
-    updateBuyButton();
+buyBtn.addEventListener('click', async () => {
+    const selectedIds = updateBuyButton();
+    const PostResponse = await fetch(`/api/cart/remove-many`, { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            Ids: selectedIds,
+        }),
+    });
+    loadCart('/api/cart');
+    alert('Purchase successful!');
 });
 
-function updateBuyButton() {
-    const checkboxProducts = document.querySelectorAll('input[type="checkbox"]');
-    const checkedProducts = Array.from(checkboxProducts).filter(p => p.checked === true);
-    let totalPrice = 0;
-    checkedProducts.forEach(product => {
-        const productCard = product.closest('.product-card');
-        const productPrice = productCard.querySelector('.product-price');
-        const priceText = productPrice.textContent;
-        const priceNumber = parseInt(priceText);
-        const productQuantity = productCard.querySelector('.quantity-number');
-        const quantityText = productQuantity.textContent;
-        const quantityNumber = parseInt(quantityText);
-        totalPrice += priceNumber * quantityNumber;
-        buyBtn.textContent = `Buy for ${totalPrice} hrn`;
-    });
-}
 
+// ==========================================
+// 6. APPLICATION INITIALIZATION
+// ==========================================
 loadCart('/api/cart');
